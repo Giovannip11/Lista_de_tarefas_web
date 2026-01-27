@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+}
+
+.form input {
+    margin-right: 5px;
+    padding: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+tr.destaque {
+    background-color: yellow;
+}
+
+button {
+    margin: 2px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    width: 300px;
+    margin: 100px auto;
+    border-radius: 5px;
+}
+
+.modal-actions {
+    margin-top: 10px;
+    text-align: right;
+}
+tfoot td {
+    font-weight: bold;
+    text-align: right;
+    background: #f0f0f0;
+}

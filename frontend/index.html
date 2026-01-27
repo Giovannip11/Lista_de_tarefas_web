@@ -5,12 +5,52 @@
         <title>Gerenciador de Tarefas</title>
         <link rel="stylesheet" href="style.css" />
     </head>
-    <body>
-        <h1>Tarefas</h1>
-        <input id="task" placeholder="Nova tarefa" />
-        <button onclick="addTask()">Adicionar</button>
 
-        <ul id="list"></ul>
+    <body>
+        <h1>Lista de Tarefas</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Custo</th>
+                    <th>Data limite</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="list"></tbody>
+
+            <tfoot>
+                <tr>
+                    <td colspan="4" id="total">Total: R$ 0,00</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <section class="form-footer">
+            <h3>Incluir nova tarefa</h3>
+            <input id="nome" placeholder="Nome da tarefa" />
+            <input id="custo" type="number" placeholder="Custo (R$)" />
+            <input id="data" type="date" />
+            <button onclick="addTask()">Adicionar</button>
+        </section>
+
+        <!-- MODAL -->
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <h2>Editar tarefa</h2>
+
+                <input id="editNome" />
+                <input id="editCusto" type="number" />
+                <input id="editData" type="date" />
+
+                <div class="modal-actions">
+                    <button onclick="saveEdit()">Salvar</button>
+                    <button onclick="closeModal()">Cancelar</button>
+                </div>
+            </div>
+        </div>
 
         <script src="script.js"></script>
     </body>
