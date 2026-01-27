@@ -14,12 +14,13 @@ def create_task():
     data = request.json
 
     if not all(k in data for k in ("nome", "custo", "data_limite")):
-        return jsonify({"erro", "Campos obrigatŕios ausentes"}), 400
-
+        return jsonify({"erro": "Campos obrigatŕios ausentes"}), 400
+    if float(data["custo"]) < 0:
+        return jsonify({"erro": "número menor que zero"}), 400
     try:
         data_formdata = datetime.strptime(data["data_limite"], "%d/%m/%Y").date()
     except ValueError:
-        return jsonify({"erro", "DATA INVÁLIDA"}), 400
+        return jsonify({"erro": "DATA INVÁLIDA"}), 400
 
     ultima_ordem = db.session.query(func.max(Tarefa.ordem)).scalar()
     nova_ordem = (ultima_ordem or 0) + 1
@@ -33,10 +34,10 @@ def create_task():
     try:
         db.session.add(nova)
         db.session.commit()
-    except:
+    except Exception as e:
         db.session.rollback()
-        return jsonify({"erro:NOME OU ORDEM JÀ EXISTENTE"}), 400
-    return jsonify({"msg", "TAREFA ENVIADA COM SUCESSO"}), 201
+        print(e)
+    return jsonify({"msg": "TAREFA ENVIADA COM SUCESSO"}), 201
 
 
 @main.route("/tasks", methods=["GET"])
@@ -62,10 +63,10 @@ def list_task():
 def delete_task(id):
     tarefa = Tarefa.query.get(id)
     if not tarefa:
-        return jsonify({"erro", "TAREFA NÃO ENCONTRADA"}), 404
+        return jsonify({"erro": "TAREFA NÃO ENCONTRADA"}), 404
     db.session.delete(tarefa)
     db.session.commit()
-    return jsonify({"msg", "TAREFA DELETADA COM SUCESSO"}), 200
+    return jsonify({"msg": "TAREFA DELETADA COM SUCESSO"}), 200
 
 
 @main.route("/tasks/<int:id>", methods=["PUT"])
@@ -75,18 +76,26 @@ def update_task(id):
     try:
         tarefa.data_limite = datetime.strptime(data["data_limite"], "%d/%m/%Y").date()
     except ValueError:
-        return jsonify({"erro", "DATA INVÁLIDA"}), 400
+        return jsonify({"erro": "DATA INVÁLIDA"}), 400
 
     tarefa.nome = data["nome"]
     tarefa.custo = data["custo"]
-
+    if float(data["custo"]) < 0:
+        return jsonify({"erro": "Número negativo"}), 400
     try:
         db.session.commit()
-    except:
+    except Exception as e:
         db.session.rollback()
-        return jsonify({"erro", "NOME OU ORDEM JÀ EXISTENTES"}), 400
+        print(e)
 
-    return jsonify({"msg", "TAREFA ATUALIZADA COM SUCESSO"}), 200
+    return jsonify({"msg": "TAREFA ATUALIZADA COM SUCESSO"}), 200
+
+
+def normalizar_ordem():
+    tarefas = Tarefa.query.order_by(Tarefa.ordem).all()
+
+    for index, tarefa in enumerate(tarefas, start=1):
+        tarefa.ordem = index
 
 
 @main.route("/tasks/<int:id>/up", methods=["PUT"])
@@ -100,16 +109,17 @@ def up_task(id):
     )
 
     if not tarefa_acima:
-        return jsonify({"msg", "A TAREFA JÁ ESTÁ NO TOPO"}), 400
+        return jsonify({"msg": "A TAREFA JÁ ESTÁ NO TOPO"}), 400
 
     ordem_temp = tarefa.ordem
     tarefa.ordem = -1
     db.session.commit()
 
-    tarefa.ordem = tarefa.acima.ordem
-    tarefa.acima.ordem = ordem_temp
-    db.session.commit
-    return jsonify({"msg", "TAREFA MOVIDA PARA CIMA"}), 200
+    tarefa.ordem = tarefa_acima.ordem
+    tarefa_acima.ordem = ordem_temp
+    db.session.commit()
+    normalizar_ordem()
+    return jsonify({"msg": "TAREFA MOVIDA PARA CIMA"}), 200
 
 
 @main.route("/tasks/<int:id>/down", methods=["PUT"])
@@ -122,7 +132,7 @@ def down_task(id):
         .first()
     )
     if not tarefa_abaixo:
-        return jsonify({"msg,A TAREFA JÀ ESTÁ NA ÚLTIMA POSIÇÃO"}), 400
+        return jsonify({"msg": "A TAREFA JÀ ESTÁ NA ÚLTIMA POSIÇÃO"}), 400
 
     ordem_temp = tarefa.ordem
     tarefa.ordem = -1
@@ -131,4 +141,5 @@ def down_task(id):
     tarefa.ordem = tarefa_abaixo.ordem
     tarefa_abaixo.ordem = ordem_temp
     db.session.commit()
-    return jsonify({"msg", "TAREFA MOVIDA PARA BAIXO"}), 200
+    normalizar_ordem()
+    return jsonify({"msg": "TAREFA MOVIDA PARA BAIXO"}), 200

@@ -1,71 +1,126 @@
+:root {
+    --bg-main: #e9ebef; /* fundo geral (cinza confortável) */
+    --bg-card: #f9fafb; /* fundo de tabela / modal (não branco puro) */
+    --primary: #9e2a2b; /* vermelho institucional */
+    --primary-hover: #7f1f20;
+    --secondary: #2f2f2f;
+    --border: #d1d5db;
+    --text-main: #1f2933;
+    --highlight: #fff3bf; /* destaque custo >= 1000 */
+}
+
+/* ===== BODY ===== */
 body {
     font-family: Arial, sans-serif;
     margin: 30px;
+    background-color: var(--bg-main);
+    color: var(--text-main);
 }
 
-.form input {
-    margin-right: 5px;
-    padding: 5px;
+/* ===== TÍTULOS ===== */
+h1,
+h3 {
+    color: var(--secondary);
 }
 
+/* ===== TABELA ===== */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+th {
+    background: #eef0f3;
+    font-weight: 600;
 }
 
 th,
 td {
-    border: 1px solid #ccc;
-    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    padding: 10px;
     text-align: center;
 }
 
+/* ===== DESTAQUE ===== */
 tr.destaque {
-    background-color: yellow;
+    background-color: var(--highlight);
 }
 
+/* ===== RODAPÉ ===== */
+tfoot td {
+    font-weight: bold;
+    text-align: right;
+    background: #eef0f3;
+}
+
+/* ===== FORM DE INCLUSÃO ===== */
+.form-footer {
+    margin-top: 25px;
+    background: var(--bg-card);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.form-footer input {
+    margin-right: 5px;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+/* ===== BOTÕES ===== */
 button {
     margin: 2px;
-    padding: 4px 8px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    background: var(--primary);
+    color: white;
     cursor: pointer;
+    font-size: 14px;
 }
 
-/* MODAL */
+button:hover {
+    background: var(--primary-hover);
+}
+
+button:disabled {
+    background: #c5c5c5;
+    cursor: not-allowed;
+}
+
+/* ===== MODAL ===== */
 .modal {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.45);
 }
 
 .modal-content {
-    background: white;
+    background: var(--bg-card);
     padding: 20px;
-    width: 300px;
-    margin: 100px auto;
-    border-radius: 5px;
-}
-
-.modal-actions {
-    margin-top: 10px;
-    text-align: right;
-}
-tfoot td {
-    font-weight: bold;
-    text-align: right;
-    background: #f0f0f0;
-}
-th {
-    background: #eee;
-}
-
-button:hover {
-    opacity: 0.8;
+    width: 320px;
+    margin: 120px auto;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 .modal-content input {
     width: 100%;
-    margin-bottom: 8px;
-    padding: 5px;
+    margin-bottom: 10px;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.modal-actions {
+    margin-top: 12px;
+    text-align: right;
 }
