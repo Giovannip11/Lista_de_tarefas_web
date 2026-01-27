@@ -35,8 +35,8 @@ def create_task():
         db.session.commit()
     except:
         db.session.rollback()
-        return jsonify({"ERRO:NOME OU ORDEM JÀ EXISTENTE"}), 400
-    return jsonify({"MSG", "TAREFA ENVIADA COM SUCESSO"}), 201
+        return jsonify({"erro:NOME OU ORDEM JÀ EXISTENTE"}), 400
+    return jsonify({"msg", "TAREFA ENVIADA COM SUCESSO"}), 201
 
 
 @main.route("/tasks", methods=["GET"])
@@ -62,13 +62,13 @@ def list_task():
 def delete_task(id):
     tarefa = Tarefa.query.get(id)
     if not tarefa:
-        return jsonify({"ERRO", "TAREFA NÃO ENCONTRADA"}), 404
+        return jsonify({"erro", "TAREFA NÃO ENCONTRADA"}), 404
     db.session.delete(tarefa)
     db.session.commit()
-    return jsonify({"MSG", "TAREFA DELETADA COM SUCESSO"}), 200
+    return jsonify({"msg", "TAREFA DELETADA COM SUCESSO"}), 200
 
 
-@main.route("/tasks", methods=["PUT"])
+@main.route("/tasks/<int:id>", methods=["PUT"])
 def update_task(id):
     tarefa = Tarefa.query.get_or_404(id)
     data = request.json
@@ -86,10 +86,10 @@ def update_task(id):
         db.session.rollback()
         return jsonify({"erro", "NOME OU ORDEM JÀ EXISTENTES"}), 400
 
-    return jsonify({"MSG", "TAREFA ATUALIZADA COM SUCESSO"}), 200
+    return jsonify({"msg", "TAREFA ATUALIZADA COM SUCESSO"}), 200
 
 
-@main.route("/tarefas/<int:id>/up", methods=["PUT"])
+@main.route("/tasks/<int:id>/up", methods=["PUT"])
 def up_task(id):
     tarefa = Tarefa.query.get_or_404(id)
 
@@ -100,14 +100,19 @@ def up_task(id):
     )
 
     if not tarefa_acima:
-        return jsonify({"MSG", "A TAREFA JÁ ESTÁ NO TOPO"}), 400
+        return jsonify({"msg", "A TAREFA JÁ ESTÁ NO TOPO"}), 400
 
-    tarefa.ordem, tarefa_acima.ordem = tarefa_acima.ordem, tarefa.ordem
+    ordem_temp = tarefa.ordem
+    tarefa.ordem = -1
     db.session.commit()
-    return jsonify({"MSG", "TAREFA MOVIDA PARA CIMA"})
+
+    tarefa.ordem = tarefa.acima.ordem
+    tarefa.acima.ordem = ordem_temp
+    db.session.commit
+    return jsonify({"msg", "TAREFA MOVIDA PARA CIMA"}), 200
 
 
-@main.route("/tarefas/<int:id>/down", methods=["PUT"])
+@main.route("/tasks/<int:id>/down", methods=["PUT"])
 def down_task(id):
     tarefa = Tarefa.query.get_or_404(id)
 
@@ -117,8 +122,13 @@ def down_task(id):
         .first()
     )
     if not tarefa_abaixo:
-        return jsonify({"MSG,A TAREFA JÀ ESTÁ NA ÚLTIMA POSIÇÃO"}), 400
+        return jsonify({"msg,A TAREFA JÀ ESTÁ NA ÚLTIMA POSIÇÃO"}), 400
 
-    tarefa.ordem, tarefa_abaixo.ordem = tarefa_abaixo.ordem, tarefa.ordem
+    ordem_temp = tarefa.ordem
+    tarefa.ordem = -1
     db.session.commit()
-    return jsonify({"MSG", "TAREFA MOVIDA PARA BAIXO"})
+
+    tarefa.ordem = tarefa_abaixo.ordem
+    tarefa_abaixo.ordem = ordem_temp
+    db.session.commit()
+    return jsonify({"msg", "TAREFA MOVIDA PARA BAIXO"}), 200

@@ -1,5 +1,6 @@
 const API = "http://localhost:5000";
 let editId = null;
+let deleteId = null;
 
 async function loadTasks() {
   const res = await fetch(`${API}/tasks`);
@@ -27,7 +28,7 @@ async function loadTasks() {
         <button onclick="moveUp(${t.id})" ${index === 0 ? "disabled" : ""}>🔼</button>
         <button onclick="moveDown(${t.id})" ${index === tasks.length - 1 ? "disabled" : ""}>🔽</button>
         <button onclick='openModal(${JSON.stringify(t)})'>✏️</button>
-        <button onclick="deleteTask(${t.id})">🗑️</button>
+        <button onclick="openDeleteModal(${t.id})">🗑️</button>
       </td>
     `;
 
@@ -64,20 +65,13 @@ async function addTask() {
   loadTasks();
 }
 
-async function deleteTask(id) {
-  if (!confirm("Deseja realmente excluir esta tarefa?")) return;
-
-  await fetch(`${API}/tasks/${id}`, { method: "DELETE" });
-  loadTasks();
-}
-
 async function moveUp(id) {
-  await fetch(`${API}/tarefas/${id}/up`, { method: "PUT" });
+  await fetch(`${API}/tasks/${id}/up`, { method: "PUT" });
   loadTasks();
 }
 
 async function moveDown(id) {
-  await fetch(`${API}/tarefas/${id}/down`, { method: "PUT" });
+  await fetch(`${API}/tasks/${id}/down`, { method: "PUT" });
   loadTasks();
 }
 
@@ -120,3 +114,23 @@ async function saveEdit() {
 }
 
 loadTasks();
+function openDeleteModal(id) {
+  deleteId = id;
+  document.getElementById("deleteModal").style.display = "block";
+}
+
+function closeDeleteModal() {
+  document.getElementById("deleteModal").style.display = "none";
+  deleteId = null;
+}
+
+async function confirmDelete() {
+  if (!deleteId) return;
+
+  await fetch(`${API}/tasks/${deleteId}`, {
+    method: "DELETE",
+  });
+
+  closeDeleteModal();
+  loadTasks();
+}
