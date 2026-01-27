@@ -56,3 +56,16 @@ tfoot td {
     text-align: right;
     background: #f0f0f0;
 }
+th {
+    background: #eee;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.modal-content input {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 5px;
+}
