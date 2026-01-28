@@ -1,4 +1,4 @@
-const API = "http://localhost:5000";
+const API = "https://lista-de-tarefas-web.onrender.com";
 let editId = null;
 let deleteId = null;
 
