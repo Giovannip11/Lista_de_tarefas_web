@@ -66,6 +66,7 @@ def delete_task(id):
         return jsonify({"erro": "TAREFA NÃO ENCONTRADA"}), 404
     db.session.delete(tarefa)
     db.session.commit()
+    normalizar_ordem()
     return jsonify({"msg": "TAREFA DELETADA COM SUCESSO"}), 200
 
 
@@ -96,6 +97,7 @@ def normalizar_ordem():
 
     for index, tarefa in enumerate(tarefas, start=1):
         tarefa.ordem = index
+    db.session.commit()
 
 
 @main.route("/tasks/<int:id>/up", methods=["PUT"])
@@ -112,13 +114,13 @@ def up_task(id):
         return jsonify({"msg": "A TAREFA JÁ ESTÁ NO TOPO"}), 400
 
     ordem_temp = tarefa.ordem
-    tarefa.ordem = -1
-    db.session.commit()
+
+    tarefa.ordem = 0
+    db.session.flush()
 
     tarefa.ordem = tarefa_acima.ordem
     tarefa_acima.ordem = ordem_temp
     db.session.commit()
-    normalizar_ordem()
     return jsonify({"msg": "TAREFA MOVIDA PARA CIMA"}), 200
 
 
@@ -135,11 +137,10 @@ def down_task(id):
         return jsonify({"msg": "A TAREFA JÀ ESTÁ NA ÚLTIMA POSIÇÃO"}), 400
 
     ordem_temp = tarefa.ordem
-    tarefa.ordem = -1
-    db.session.commit()
-
+    tarefa.ordem = 0
+    db.session.flush()
     tarefa.ordem = tarefa_abaixo.ordem
     tarefa_abaixo.ordem = ordem_temp
     db.session.commit()
-    normalizar_ordem()
+
     return jsonify({"msg": "TAREFA MOVIDA PARA BAIXO"}), 200

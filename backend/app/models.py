@@ -8,4 +8,4 @@ class Tarefa(db.Model):
     nome = db.Column(db.String(100), unique=True, nullable=False)
     custo = db.Column(db.Numeric(10, 2), nullable=False)
     data_limite = db.Column(db.Date, nullable=False)
-    ordem = db.Column(db.Integer, unique=True, nullable=False)
+    ordem = db.Column(db.Integer, nullable=False)
