@@ -1,6 +1,7 @@
 from . import db
 
 
+# model do bd tabela tarefas
 class Tarefa(db.Model):
     __tablename__ = "tarefas"
 

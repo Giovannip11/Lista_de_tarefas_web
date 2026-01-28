@@ -9,6 +9,7 @@ from .models import Tarefa
 main = Blueprint("main", __name__)
 
 
+# criação de tarefas persistindo no BD
 @main.route("/tasks", methods=["POST"])
 def create_task():
     data = request.json
@@ -40,6 +41,7 @@ def create_task():
     return jsonify({"msg": "TAREFA ENVIADA COM SUCESSO"}), 201
 
 
+# Listando tarefas, gerando um destaque amarelo para tarefas maiores de 1000
 @main.route("/tasks", methods=["GET"])
 def list_task():
     tarefas = Tarefa.query.order_by(Tarefa.ordem).all()
@@ -59,6 +61,7 @@ def list_task():
     )
 
 
+# deleta task e normaliza a ordem
 @main.route("/tasks/<int:id>", methods=["DELETE"])
 def delete_task(id):
     tarefa = Tarefa.query.get(id)
@@ -70,6 +73,7 @@ def delete_task(id):
     return jsonify({"msg": "TAREFA DELETADA COM SUCESSO"}), 200
 
 
+# função para fazer a edição de tarefas já existentes
 @main.route("/tasks/<int:id>", methods=["PUT"])
 def update_task(id):
     tarefa = Tarefa.query.get_or_404(id)
@@ -92,6 +96,7 @@ def update_task(id):
     return jsonify({"msg": "TAREFA ATUALIZADA COM SUCESSO"}), 200
 
 
+# normalização da ordem, necessário para a função delete
 def normalizar_ordem():
     tarefas = Tarefa.query.order_by(Tarefa.ordem).all()
 
@@ -100,6 +105,7 @@ def normalizar_ordem():
     db.session.commit()
 
 
+# Para subir a task mudando ela de posição
 @main.route("/tasks/<int:id>/up", methods=["PUT"])
 def up_task(id):
     tarefa = Tarefa.query.get_or_404(id)
@@ -112,7 +118,7 @@ def up_task(id):
 
     if not tarefa_acima:
         return jsonify({"msg": "A TAREFA JÁ ESTÁ NO TOPO"}), 400
-
+        # swap manual
     ordem_temp = tarefa.ordem
 
     tarefa.ordem = 0
@@ -124,6 +130,7 @@ def up_task(id):
     return jsonify({"msg": "TAREFA MOVIDA PARA CIMA"}), 200
 
 
+# Mudança da posição da tarefa para baixo
 @main.route("/tasks/<int:id>/down", methods=["PUT"])
 def down_task(id):
     tarefa = Tarefa.query.get_or_404(id)
@@ -135,7 +142,7 @@ def down_task(id):
     )
     if not tarefa_abaixo:
         return jsonify({"msg": "A TAREFA JÀ ESTÁ NA ÚLTIMA POSIÇÃO"}), 400
-
+        # swap manual
     ordem_temp = tarefa.ordem
     tarefa.ordem = 0
     db.session.flush()

@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+# start do projeto, subindo o app e bd
 def create_app():
     app = Flask(__name__)
     CORS(app)
