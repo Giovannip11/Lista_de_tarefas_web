@@ -18,6 +18,11 @@ def create_task():
         return jsonify({"erro": "Campos obrigatŕios ausentes"}), 400
     if float(data["custo"]) < 0:
         return jsonify({"erro": "número menor que zero"}), 400
+        # antes de criar
+    existe = Tarefa.query.filter_by(nome=data["nome"]).first()
+    if existe:
+        return jsonify({"erro": "Já existe uma tarefa com esse nome"}), 409
+
     try:
         data_formdata = datetime.strptime(data["data_limite"], "%d/%m/%Y").date()
     except ValueError:
@@ -78,6 +83,14 @@ def delete_task(id):
 def update_task(id):
     tarefa = Tarefa.query.get_or_404(id)
     data = request.json
+    existe = Tarefa.query.filter(Tarefa.nome == data["nome"], Tarefa.id != id).first()
+
+    if existe:
+        return jsonify({"erro": "Já existe uma tarefa com esse nome"}), 409
+
+    if not data or not all(k in data for k in ("nome", "custo", "data_limite")):
+        return jsonify({"erro": "Campos obrigatórios ausentes"}), 400
+
     try:
         tarefa.data_limite = datetime.strptime(data["data_limite"], "%d/%m/%Y").date()
     except ValueError:

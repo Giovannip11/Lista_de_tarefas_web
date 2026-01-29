@@ -62,7 +62,7 @@ async function addTask() {
     return;
   }
 
-  await fetch(`${API}/tasks`, {
+  const res = await fetch(`${API}/tasks`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -72,9 +72,12 @@ async function addTask() {
     }),
   });
 
-  document.getElementById("nome").value = "";
-  document.getElementById("custo").value = "";
-  document.getElementById("data").value = "";
+  const dataRes = await res.json();
+
+  if (!res.ok) {
+    showError(dataRes.erro || "Erro ao criar tarefa");
+    return;
+  }
 
   loadTasks();
 }
@@ -122,7 +125,7 @@ async function saveEdit() {
     return;
   }
 
-  await fetch(`${API}/tasks/${editId}`, {
+  const res = await fetch(`${API}/tasks/${editId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -131,6 +134,13 @@ async function saveEdit() {
       data_limite: data.split("-").reverse().join("/"),
     }),
   });
+
+  const dataRes = await res.json();
+
+  if (!res.ok) {
+    showError(dataRes.erro || "Erro ao editar tarefa");
+    return;
+  }
 
   closeModal();
   loadTasks();
