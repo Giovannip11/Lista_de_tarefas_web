@@ -2,8 +2,10 @@ const API = "https://lista-de-tarefas-web.onrender.com";
 let editId = null;
 let deleteId = null;
 
-async function loadTasks() {
-  document.getElementById("loading").style.display = "flex";
+async function loadTasks(showLoading = true) {
+  if (showLoading) {
+    document.getElementById("loading").style.display = "flex";
+  }
 
   try {
     const res = await fetch(`${API}/tasks`);
@@ -44,7 +46,9 @@ async function loadTasks() {
     document.getElementById("list").innerHTML =
       `<tr><td colspan="4">Erro ao carregar tarefas</td></tr>`;
   } finally {
-    document.getElementById("loading").style.display = "none";
+    if (showLoading) {
+      document.getElementById("loading").style.display = "none";
+    }
   }
 }
 
@@ -84,12 +88,12 @@ async function addTask() {
 
 async function moveUp(id) {
   await fetch(`${API}/tasks/${id}/up`, { method: "PUT" });
-  loadTasks();
+  loadTasks(false);
 }
 
 async function moveDown(id) {
   await fetch(`${API}/tasks/${id}/down`, { method: "PUT" });
-  loadTasks();
+  loadTasks(false);
 }
 
 /* MODAL */
