@@ -47,6 +47,10 @@ async function addTask() {
     alert("Preencha todos os campos");
     return;
   }
+  if (custo < 0) {
+    showError("O custo não pode ser negativo");
+    return;
+  }
 
   await fetch(`${API}/tasks`, {
     method: "POST",
@@ -99,6 +103,15 @@ async function saveEdit() {
   const custo = document.getElementById("editCusto").value;
   const data = document.getElementById("editData").value;
 
+  if (!nome || !data || custo < 0) {
+    showError("Preencha todos os campos e o custo não pode ser negativo");
+    return;
+  }
+  if (custo < 0) {
+    showError("O custo não pode ser negativo");
+    return;
+  }
+
   await fetch(`${API}/tasks/${editId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -133,4 +146,12 @@ async function confirmDelete() {
 
   closeDeleteModal();
   loadTasks();
+}
+function showError(msg) {
+  document.getElementById("errorMessage").innerText = msg;
+  document.getElementById("errorModal").style.display = "block";
+}
+
+function closeErrorModal() {
+  document.getElementById("errorModal").style.display = "none";
 }
