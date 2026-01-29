@@ -3,39 +3,49 @@ let editId = null;
 let deleteId = null;
 
 async function loadTasks() {
-  const res = await fetch(`${API}/tasks`);
-  const tasks = await res.json();
+  document.getElementById("loading").style.display = "flex";
 
-  const tbody = document.getElementById("list");
-  tbody.innerHTML = "";
+  try {
+    const res = await fetch(`${API}/tasks`);
+    const tasks = await res.json();
 
-  let total = 0;
+    const tbody = document.getElementById("list");
+    tbody.innerHTML = "";
 
-  tasks.forEach((t, index) => {
-    total += Number(t.custo);
+    let total = 0;
 
-    const tr = document.createElement("tr");
+    tasks.forEach((t, index) => {
+      total += Number(t.custo);
 
-    if (t.custo >= 1000) {
-      tr.classList.add("destaque");
-    }
+      const tr = document.createElement("tr");
 
-    tr.innerHTML = `
-      <td>${t.nome}</td>
-      <td>R$ ${Number(t.custo).toFixed(2)}</td>
-      <td>${t.data_limite}</td>
-      <td>
-        <button onclick="moveUp(${t.id})" ${index === 0 ? "disabled" : ""}>🔼</button>
-        <button onclick="moveDown(${t.id})" ${index === tasks.length - 1 ? "disabled" : ""}>🔽</button>
-        <button onclick='openModal(${JSON.stringify(t)})'>✏️</button>
-        <button onclick="openDeleteModal(${t.id})">🗑️</button>
-      </td>
-    `;
+      if (t.custo >= 1000) {
+        tr.classList.add("destaque");
+      }
 
-    tbody.appendChild(tr);
-  });
+      tr.innerHTML = `
+        <td>${t.nome}</td>
+        <td>R$ ${Number(t.custo).toFixed(2)}</td>
+        <td>${t.data_limite}</td>
+        <td>
+          <button onclick="moveUp(${t.id})" ${index === 0 ? "disabled" : ""}>🔼</button>
+          <button onclick="moveDown(${t.id})" ${index === tasks.length - 1 ? "disabled" : ""}>🔽</button>
+          <button onclick='openModal(${JSON.stringify(t)})'>✏️</button>
+          <button onclick="openDeleteModal(${t.id})">🗑️</button>
+        </td>
+      `;
 
-  document.getElementById("total").innerText = `Total: R$ ${total.toFixed(2)}`;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById("total").innerText =
+      `Total: R$ ${total.toFixed(2)}`;
+  } catch (err) {
+    document.getElementById("list").innerHTML =
+      `<tr><td colspan="4">Erro ao carregar tarefas</td></tr>`;
+  } finally {
+    document.getElementById("loading").style.display = "none";
+  }
 }
 
 async function addTask() {
