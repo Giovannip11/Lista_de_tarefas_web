@@ -123,7 +123,7 @@ function openModal(task) {
   document.getElementById("modal").style.display = "block";
 
   setTimeout(() => {
-    (document.getElementById("editNome"), focus());
+    document.getElementById("editNome").focus();
   }, 10);
 }
 
