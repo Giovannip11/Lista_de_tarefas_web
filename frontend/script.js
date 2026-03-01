@@ -28,7 +28,7 @@ async function loadTasks(showLoading = true) {
       tr.innerHTML = `
         <td>${t.id}</td>
         <td>${t.nome}</td>
-        <td>R$ ${Number(t.custo).toFixed(2)}</td>
+        <td>R$ ${valuesForBr(t.custo)}</td>
         <td>${t.data_limite}</td>
         <td>
           <button onclick="moveUp(${t.id})" ${index === 0 ? "disabled" : ""}>🔼</button>
