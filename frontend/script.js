@@ -26,6 +26,7 @@ async function loadTasks(showLoading = true) {
       }
 
       tr.innerHTML = `
+        <td>${t.id}</td>
         <td>${t.nome}</td>
         <td>R$ ${Number(t.custo).toFixed(2)}</td>
         <td>${t.data_limite}</td>
@@ -86,6 +87,16 @@ async function addTask() {
   loadTasks();
 }
 
+function valuesForBr(value) {
+  return Number(value).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+function valueNormalize(value) {
+  return value.replace(",", ".");
+}
+
 async function moveUp(id) {
   await fetch(`${API}/tasks/${id}/up`, { method: "PUT" });
   loadTasks(false);
@@ -108,6 +119,10 @@ function openModal(task) {
     .join("-");
 
   document.getElementById("modal").style.display = "block";
+
+  setTimeout(() => {
+    (document.getElementById("editNome"), focus());
+  }, 10);
 }
 
 function closeModal() {
@@ -155,6 +170,9 @@ function openDeleteModal(id) {
   deleteId = id;
   document.getElementById("deleteModal").style.display = "block";
 }
+window.onload = () => {
+  document.getElementById("nome").focus();
+};
 
 function closeDeleteModal() {
   document.getElementById("deleteModal").style.display = "none";

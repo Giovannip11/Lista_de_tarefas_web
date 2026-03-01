@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 
 from flask import Blueprint, jsonify, request
 from sqlalchemy import func
@@ -7,6 +8,27 @@ from . import db
 from .models import Tarefa
 
 main = Blueprint("main", __name__)
+
+
+MAX_VALUE = Decimal("99999999,99")
+
+
+def validate_value(value):
+    if isinstance(value, float):
+        value = str(value)
+
+    value = value.replace(",", ".")
+
+    try:
+        custo = Decimal(value)
+    except InvalidOperation:
+        return False, "Valor de custo inválido"
+
+    if custo < 0:
+        return False, "O custo não pode ser negativo"
+    if custo > MAX_VALUE:
+        return False, f"O custo máximo permitido {MAX_VALUE}"
+    return True, custo
 
 
 # criação de tarefas persistindo no BD
