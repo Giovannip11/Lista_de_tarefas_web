@@ -9,8 +9,8 @@ from .models import Tarefa
 
 main = Blueprint("main", __name__)
 
-
-MAX_VALUE = Decimal("99999999,99")
+MIN_VALUE = Decimal("0.01")
+MAX_VALUE = Decimal("9999999.99")
 
 
 def validate_value(value):
@@ -28,6 +28,8 @@ def validate_value(value):
         return False, "O custo não pode ser negativo"
     if custo > MAX_VALUE:
         return False, f"O custo máximo permitido {MAX_VALUE}"
+    if custo < MIN_VALUE:
+        return False, f"O custo mínimo permitido {MIN_VALUE}"
     return True, custo
 
 
