@@ -1,4 +1,6 @@
 const API = "https://lista-de-tarefas-web.onrender.com";
+const MAX_VALUE = 9999999.99;
+const MIN_VALUE = 0.01;
 let editId = null;
 let deleteId = null;
 
@@ -42,7 +44,7 @@ async function loadTasks(showLoading = true) {
     });
 
     document.getElementById("total").innerText =
-      `Total: R$ ${total.toFixed(2)}`;
+      `Total: R$ ${valuesForBr(total)}`;
   } catch (err) {
     document.getElementById("list").innerHTML =
       `<tr><td colspan="4">Erro ao carregar tarefas</td></tr>`;
@@ -62,7 +64,7 @@ async function addTask() {
     alert("Preencha todos os campos");
     return;
   }
-  if (custo < 0) {
+  if (!validateCost(custo)) {
     showError("O custo não pode ser negativo");
     return;
   }
@@ -139,6 +141,7 @@ async function saveEdit() {
     showError("Preencha todos os campos e o custo não pode ser negativo");
     return;
   }
+  if (!validateCost(custo)) return;
   if (custo < 0) {
     showError("O custo não pode ser negativo");
     return;
@@ -196,4 +199,23 @@ function showError(msg) {
 
 function closeErrorModal() {
   document.getElementById("errorModal").style.display = "none";
+}
+function validateCost(value) {
+  const normalized = Number(value.toString().replace(",", "."));
+  if (isNaN(normalized)) {
+    showError("Valor inválido. Digite apenas números.");
+    return false;
+  }
+
+  if (normalized < MIN_VALUE) {
+    showError(`O valor mínimo permitido é R$ ${valuesForBr(MIN_VALUE)}`);
+    return false;
+  }
+
+  if (normalized > MAX_VALUE) {
+    showError(`O valor máximo permitido é R$ ${valuesForBr(MAX_VALUE)}`);
+    return false;
+  }
+
+  return true;
 }
