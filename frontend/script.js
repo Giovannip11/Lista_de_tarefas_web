@@ -65,7 +65,7 @@ async function addTask() {
     return;
   }
   if (!validateCost(custo)) {
-    showError("O custo não pode ser negativo");
+    showError("O custo inválido");
     return;
   }
 
