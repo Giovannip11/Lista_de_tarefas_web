@@ -143,7 +143,7 @@ async function saveEdit() {
   }
   if (!validateCost(custo)) return;
   if (custo < 0) {
-    showError("O custo não pode ser negativo");
+    showError("Custo inválido");
     return;
   }
 
